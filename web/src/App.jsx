@@ -3,6 +3,7 @@ import Map from "./components/Map.jsx";
 import PillSelector from "./components/PillSelector.jsx";
 import YearSlider from "./components/YearSlider.jsx";
 import SidePanel from "./components/SidePanel.jsx";
+import LogoBar from "./components/LogoBar.jsx";
 import Legend from "./components/Legend.jsx";
 import { getValueForFeature, computeGlobalBreaks, getReferences } from "./utils/data.js";
 
@@ -127,13 +128,16 @@ export default function App() {
         </div>
 
         {selectedAbp && statsData && (
-          <SidePanel
-            abpCode={selectedAbp}
-            stats={statsData[selectedAbp]}
-            metric={selectedMetric}
-            year={selectedYear}
-            onClose={() => setSelectedAbp(null)}
-          />
+          <div className="side-section">
+            <LogoBar />
+            <SidePanel
+              abpCode={selectedAbp}
+              stats={statsData[selectedAbp]}
+              metric={selectedMetric}
+              year={selectedYear}
+              onClose={() => setSelectedAbp(null)}
+            />
+          </div>
         )}
       </div>
     </div>
