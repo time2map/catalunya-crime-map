@@ -16,3 +16,7 @@ venv/
 
 # IDE
 .idea/
+
+# Web app build artifacts
+web/node_modules/
+web/dist/
