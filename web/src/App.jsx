@@ -18,9 +18,10 @@ export default function App() {
   const [hoveredAbp, setHoveredAbp] = useState(null);
 
   useEffect(() => {
+    const base = import.meta.env.BASE_URL;
     Promise.all([
-      fetch("/data/abp.geojson").then((r) => r.json()),
-      fetch("/data/stats.json").then((r) => r.json()),
+      fetch(`${base}data/abp.geojson`).then((r) => r.json()),
+      fetch(`${base}data/stats.json`).then((r) => r.json()),
     ])
       .then(([geo, stats]) => {
         setGeoData(geo);
