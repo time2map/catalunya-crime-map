@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://time2map.github.io/catalunya-crime-map/sitemap.xml
