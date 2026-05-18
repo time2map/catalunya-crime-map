@@ -1,12 +1,12 @@
-// RdYlBu 7-class, reversed: low (safe) = blue, high (dangerous) = red
+// Teal → Cream → Coral: low (safe) = teal, high (dangerous) = deep red
 const RAMP = [
-  "#4575b4", // dark blue   — safest
-  "#91bfdb", // light blue
-  "#e0f3f8", // pale blue
-  "#ffffbf", // pale yellow — average
-  "#fee090", // light orange
-  "#fc8d59", // orange
-  "#d73027", // dark red    — most dangerous
+  "#1b7a8a", // deep teal   — safest
+  "#5aaab8", // mid teal
+  "#a3d4da", // light teal
+  "#f0ebe3", // warm cream  — average
+  "#f2b09e", // light salmon
+  "#e67b6e", // mid coral
+  "#c9463b", // deep red    — most dangerous
 ];
 const NO_DATA = "#94a3b8"; // slate-400, visible on dark basemap
 

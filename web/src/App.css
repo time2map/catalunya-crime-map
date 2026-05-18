@@ -11,9 +11,9 @@
   --accent: #F06965;
   --accent-dim: rgba(240, 105, 101, 0.25);
   --accent-glow: rgba(240, 105, 101, 0.35);
-  --good: #22c55e;
-  --bad: #ef4444;
-  --mid: #f59e0b;
+  --good: #5aaab8;
+  --bad: #d95c50;
+  --mid: #e8a898;
   --glass-bg: rgba(8, 13, 26, 0.78);
   --glass-border: rgba(255, 255, 255, 0.08);
   --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
