@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { CRIME_KEYS, CRIME_LABELS, SPAIN_EXCLUDED } from "../utils/data.js";
 import InfoTooltip from "./InfoTooltip.jsx";
 
@@ -13,6 +14,7 @@ function RatioCell({ ratio }) {
 }
 
 export default function SidePanel({ abpCode, stats, metric, year, onClose }) {
+  const { t } = useTranslation();
   if (!stats) return null;
   const yearStr = String(year);
   const yearData = stats.years?.[yearStr] || {};
@@ -22,46 +24,46 @@ export default function SidePanel({ abpCode, stats, metric, year, onClose }) {
 
   return (
     <div className="side-panel">
-      <button className="close-btn" onClick={onClose} aria-label="Close">×</button>
+      <button className="close-btn" onClick={onClose} aria-label={t("panel.close")}>×</button>
 
       <h2>{stats.abp_d}</h2>
       <p className="abp-meta">
-        Population: <strong>{Number(stats.abp_pob).toLocaleString()}</strong>
+        {t("panel.population")}: <strong>{Number(stats.abp_pob).toLocaleString()}</strong>
       </p>
 
       <div className="index-cards">
         <div className="index-card">
           <div className="index-label">
-            Safety vs Catalunya ({year}) <InfoTooltip />
+            {t("panel.safetyVsCat", { year })} <InfoTooltip />
           </div>
           <div className={`index-value ${idxCat > 1.2 ? "bad" : idxCat < 0.8 ? "good" : ""}`}>
             {fmt(idxCat, 3)}
           </div>
           {rankCat && (
-            <div className="index-rank">Rank #{rankCat} of 59</div>
+            <div className="index-rank">{t("panel.rank", { rank: rankCat })}</div>
           )}
         </div>
         <div className="index-card">
           <div className="index-label">
-            Safety vs Spain (2025) <InfoTooltip />
+            {t("panel.safetyVsSpain")} <InfoTooltip />
           </div>
           <div className={`index-value ${idxSpain > 1.2 ? "bad" : idxSpain < 0.8 ? "good" : ""}`}>
             {fmt(idxSpain, 3)}
           </div>
-          <div className="index-rank index-note">9 of 12 types · 2025 only</div>
+          <div className="index-rank index-note">{t("panel.spainNote")}</div>
         </div>
       </div>
 
-      <h3>Crime rates per 1,000 residents — {year}</h3>
+      <h3>{t("panel.crimeRates", { year })}</h3>
       <table className="stats-table">
         <thead>
           <tr>
-            <th>Type</th>
-            <th>Rate</th>
-            <th>Cat avg</th>
-            <th>Spain avg</th>
-            <th>vs Cat</th>
-            <th>vs Spain</th>
+            <th>{t("panel.colType")}</th>
+            <th>{t("panel.colRate")}</th>
+            <th>{t("panel.colCatAvg")}</th>
+            <th>{t("panel.colSpainAvg")}</th>
+            <th>{t("panel.colVsCat")}</th>
+            <th>{t("panel.colVsSpain")}</th>
           </tr>
         </thead>
         <tbody>
@@ -69,7 +71,7 @@ export default function SidePanel({ abpCode, stats, metric, year, onClose }) {
             const d = yearData[key] || {};
             return (
               <tr key={key}>
-                <td>{CRIME_LABELS[key]}</td>
+                <td>{t(`crimes.${key}`, { defaultValue: CRIME_LABELS[key] })}</td>
                 <td>{fmt(d.rate, d.rate < 0.1 ? 4 : 2)}</td>
                 <td>{fmt(d.cat_avg, d.cat_avg < 0.1 ? 4 : 2)}</td>
                 <td className={SPAIN_EXCLUDED.has(key) ? "td-na" : ""}>
@@ -82,9 +84,7 @@ export default function SidePanel({ abpCode, stats, metric, year, onClose }) {
           })}
         </tbody>
       </table>
-      <p className="table-note">
-        Rate = crimes per 1,000 residents · ratio &gt; 1.0 = above average
-      </p>
+      <p className="table-note">{t("panel.tableNote")}</p>
     </div>
   );
 }

@@ -1,4 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import i18next from "./i18n.js";
 import Map from "./components/Map.jsx";
 import PillSelector from "./components/PillSelector.jsx";
 import YearSlider from "./components/YearSlider.jsx";
@@ -7,7 +9,28 @@ import LogoBar from "./components/LogoBar.jsx";
 import Legend from "./components/Legend.jsx";
 import { getValueForFeature, computeGlobalBreaks, getReferences } from "./utils/data.js";
 
+function LangSwitcher() {
+  const { i18n } = useTranslation();
+
+  function handleChange(e) {
+    const lang = e.target.value;
+    i18n.changeLanguage(lang);
+    localStorage.setItem("lang", lang);
+    const url = new URL(window.location.href);
+    url.searchParams.set("lang", lang);
+    history.replaceState(null, "", url.toString());
+  }
+
+  return (
+    <select className="lang-select" value={i18n.language} onChange={handleChange}>
+      <option value="en">EN</option>
+      <option value="es">ES</option>
+    </select>
+  );
+}
+
 export default function App() {
+  const { t } = useTranslation();
   const [geoData, setGeoData] = useState(null);
   const [statsData, setStatsData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -68,20 +91,14 @@ export default function App() {
   const yearDisabled = selectedMetric === "safety_index_spain";
 
   if (loading) {
-    return (
-      <div className="loading">
-        Loading data…<br />
-        <small>Make sure build_safety_gpkg.py has been run first.</small>
-      </div>
-    );
+    return <div className="loading">{t("app.loading")}</div>;
   }
 
   if (error) {
     return (
       <div className="loading error">
-        <strong>Failed to load data</strong><br />
-        <code>{error}</code><br />
-        <small>Run build_safety_gpkg.py then restart the dev server.</small>
+        <strong>{t("app.errorTitle") || "Failed to load data"}</strong><br />
+        <code>{error}</code>
       </div>
     );
   }
@@ -104,11 +121,12 @@ export default function App() {
           <div className="top-panel">
             <div className="app-brand">
               <LogoBar />
-              <h1 className="app-title">Catalunya Crimes</h1>
+              <h1 className="app-title">{t("app.title")}</h1>
+              <LangSwitcher />
               <button
                 className="panel-toggle"
                 onClick={() => setPanelExpanded((v) => !v)}
-                aria-label={panelExpanded ? "Collapse panel" : "Expand panel"}
+                aria-label={panelExpanded ? t("app.collapsePanel") : t("app.expandPanel")}
               >
                 <svg
                   width="14" height="14" viewBox="0 0 14 14" fill="none"

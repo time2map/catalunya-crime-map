@@ -1,17 +1,20 @@
+import { useTranslation } from "react-i18next";
 import { CRIME_KEYS, CRIME_LABELS } from "../utils/data.js";
 
-const METRICS = [
-  { key: "safety_index_cat", label: "Safety Index (vs Catalunya)", group: "index" },
-  { key: "safety_index_spain", label: "Safety Index (vs Spain)", group: "index" },
-  ...CRIME_KEYS.map((k) => ({ key: k, label: CRIME_LABELS[k], group: "crime" })),
+const METRIC_KEYS = [
+  { key: "safety_index_cat", group: "index" },
+  { key: "safety_index_spain", group: "index" },
+  ...CRIME_KEYS.map((k) => ({ key: k, group: "crime" })),
 ];
 
 export default function PillSelector({ selectedMetric, onChange }) {
+  const { t } = useTranslation();
+
   return (
     <div className="pill-selector">
-      {METRICS.map(({ key, label, group }, i) => (
+      {METRIC_KEYS.map(({ key, group }, i) => (
         <>
-          {i > 0 && METRICS[i - 1].group !== group && (
+          {i > 0 && METRIC_KEYS[i - 1].group !== group && (
             <span key={`sep-${key}`} className="pill-sep" />
           )}
           <button
@@ -20,11 +23,11 @@ export default function PillSelector({ selectedMetric, onChange }) {
             onClick={() => onChange(key)}
             title={
               key === "safety_index_spain"
-                ? "2025 only · 9 of 12 crime types"
+                ? t("pill.spainTooltip")
                 : undefined
             }
           >
-            {label}
+            {t(`crimes.${key}`, { defaultValue: CRIME_LABELS[key] })}
           </button>
         </>
       ))}
