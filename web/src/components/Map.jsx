@@ -148,7 +148,7 @@ export default function Map({ geoData, globalBreaks, selectedAbp, hoveredAbp, on
               ? `<div class="popup-row"><span class="popup-label">${metricLabel} <span class="popup-unit">per 1,000</span></span><span class="popup-val">${fmt(val)}</span></div>`
               : "") +
             `<div class="popup-sep"></div>` +
-            `<div class="popup-row"><span class="popup-label">Safety (vs Catalonia)</span><span class="popup-val-stack">${rankStr}<span class="popup-val">${fmt(catIdx)}</span></span></div>` +
+            `<div class="popup-row"><span class="popup-label">Safety (vs Catalunya)</span><span class="popup-val-stack">${rankStr}<span class="popup-val">${fmt(catIdx)}</span></span></div>` +
             `<div class="popup-row"><span class="popup-label">Safety (vs Spain, 2025)</span><span class="popup-val">${fmt(spainIdx)}</span></div>`
           )
           .addTo(map);

@@ -85,7 +85,7 @@ export default function Legend({ breaks, metric, references }) {
       {isCatIndex && (
         <div className="legend-desc">
           Weighted average of 12 crime<br />
-          rates vs Catalonia mean per year.<br />
+          rates vs Catalunya mean per year.<br />
           <span className="legend-formula">1.0 = Catalan avg · &lt;1 safer · &gt;1 riskier</span>
         </div>
       )}

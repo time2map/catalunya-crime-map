@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Download Balance de Criminalidad Q4 2025 from Ministerio del Interior
-and extract Spain-wide crime rates for comparison with Catalonia ABP data.
+and extract Spain-wide crime rates for comparison with Catalunya ABP data.
 
 Output: data/spain_averages.json
 Run:    arch -arm64 python3 fetch_spain_avg.py

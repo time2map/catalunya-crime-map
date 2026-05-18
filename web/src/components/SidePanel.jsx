@@ -32,7 +32,7 @@ export default function SidePanel({ abpCode, stats, metric, year, onClose }) {
       <div className="index-cards">
         <div className="index-card">
           <div className="index-label">
-            Safety vs Catalonia ({year}) <InfoTooltip />
+            Safety vs Catalunya ({year}) <InfoTooltip />
           </div>
           <div className={`index-value ${idxCat > 1.2 ? "bad" : idxCat < 0.8 ? "good" : ""}`}>
             {fmt(idxCat, 3)}

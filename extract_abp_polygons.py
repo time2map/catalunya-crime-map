@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Download Catalonia crime data from ICGC and build a GeoPackage for QGIS.
+Download Catalunya crime data from ICGC and build a GeoPackage for QGIS.
 
 What it does:
   1. Downloads CSV crime stats (2019–current year) from visors.icgc.cat
@@ -58,7 +58,7 @@ TILE_URL = "https://tilemaps.icgc.cat/vt/tiles/limits_vigentv42/{z}/{x}/{y}.pbf"
 TILE_ZOOM = 12
 LAYER_NAME = "arees_basiques_policials_vigent_2024"
 
-# Catalonia bounding box (with small buffer)
+# Catalunya bounding box (with small buffer)
 MIN_LON, MAX_LON = 0.1, 3.4
 MIN_LAT, MAX_LAT = 40.4, 43.0
 

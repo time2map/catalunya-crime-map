@@ -189,7 +189,7 @@ def aggregate_crimes(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
-# Step 5: compute rates and catalonia averages
+# Step 5: compute rates and Catalunya averages
 # ---------------------------------------------------------------------------
 
 def compute_rates(
@@ -220,7 +220,7 @@ def compute_rates(
 
     stats_df = pd.DataFrame(rows)
 
-    # Catalonia averages: sum(counts) / sum(pops) per (year, crime_key)
+    # Catalunya averages: sum(counts) / sum(pops) per (year, crime_key)
     pops = gdf.set_index("abp_c")["abp_pob"].to_dict()
     cat_rows = []
     for (year, key), grp in stats_df.groupby(["year", "crime_key"]):
@@ -343,7 +343,7 @@ def build_gpkg(
         ref_rows.append({
             "crime_key": row["crime_key"],
             "year": int(row["year"]),
-            "scope": "catalonia",
+            "scope": "catalunya",
             "rate": row["cat_avg"],
         })
     for key, rate in spain_rates.items():
@@ -512,7 +512,7 @@ def main() -> None:
     agg = aggregate_crimes(df)
     print(f"  Aggregated rows: {len(agg):,}")
 
-    print("\n[3/5] Computing rates and Catalonia averages...")
+    print("\n[3/5] Computing rates and Catalunya averages...")
     stats_df, cat_avg = compute_rates(agg, gdf)
     print(f"  Stats rows: {len(stats_df):,}")
     print(f"  Cat avg rows: {len(cat_avg):,}")

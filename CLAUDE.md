@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this project does
 
-Crime data pipeline + interactive web map for Catalonia (Catalunya) ABP police zones.
+Crime data pipeline + interactive web map for Catalunya ABP police zones.
 
 - Downloads crime statistics from [Mossos d'Esquadra open data](https://visors.icgc.cat/mapa-delinquencial/)
-- Computes per-zone safety indices (vs Catalonia average, vs Spain national figures)
+- Computes per-zone safety indices (vs Catalunya average, vs Spain national figures)
 - Serves the data via a React + MapLibre choropleth map deployed on GitHub Pages
 
 Live map: https://time2map.github.io/catalunya-crime-map/

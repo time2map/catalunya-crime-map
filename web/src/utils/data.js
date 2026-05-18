@@ -16,7 +16,7 @@ export const CRIME_KEYS = [
 ];
 
 export const CRIME_LABELS = {
-  safety_index_cat: "Safety Index (vs Catalonia)",
+  safety_index_cat: "Safety Index (vs Catalunya)",
   safety_index_spain: "Safety Index (vs Spain)",
   homicide: "Homicide",
   lesions: "Assault",
@@ -124,7 +124,7 @@ export function computeGlobalBreaks(statsData, metric) {
 
 /**
  * Return reference values shown in the legend:
- *   cat_avg  — Catalonia-wide rate for this metric (2025)
+ *   cat_avg  — Catalunya-wide rate for this metric (2025)
  *   spain_avg — Spain-wide rate (2025, or null if unavailable)
  *   unit     — display unit string
  *

@@ -1,6 +1,6 @@
 # Catalunya Crime Map — Mossos d'Esquadra Data
 
-Interactive choropleth map of crime rates across 59 Àrees Bàsiques Policials (ABP) in Catalonia, 2019–2025.
+Interactive choropleth map of crime rates across 59 Àrees Bàsiques Policials (ABP) in Catalunya, 2019–2025.
 
 **Live map → [time2map.github.io/catalunya-crime-map](https://time2map.github.io/catalunya-crime-map/)**
 
@@ -40,8 +40,8 @@ The interactive map is built with React 19 + Vite + MapLibre GL JS 5.
 - Choropleth of 59 ABP zones coloured by any of 12 crime types or 2 composite safety indices
 - Year slider (2019–2025); global colour scale is fixed across years for fair comparison
 - 7-class RdYlBu diverging colour ramp — blue = safer, red = more dangerous
-- Click any zone to open a detail panel with per-type rates, Catalonia and Spain averages, and ratio columns
-- Safety Index vs Catalonia — weighted average of 12 crime rates relative to the Catalan mean per year
+- Click any zone to open a detail panel with per-type rates, Catalunya and Spain averages, and ratio columns
+- Safety Index vs Catalunya — weighted average of 12 crime rates relative to the Catalan mean per year
 - Safety Index vs Spain — weighted average of 9 crime rates relative to MdI national figures (2025 only)
 
 ### Run locally
@@ -169,8 +169,8 @@ A score of **1.0** equals the reference average. Below 1.0 = safer than average.
 | RP Metropolitana Sud | Southern Barcelona suburbs |
 | RP Girona | Girona province |
 | RP Camp de Tarragona | Tarragona province |
-| RP Central | Central Catalonia |
-| RP Ponent | Western Catalonia (Lleida) |
+| RP Central | Central Catalunya |
+| RP Ponent | Western Catalunya (Lleida) |
 | RP Alt Pirineu i Aran | Pyrenees and Aran |
 | RP Terres de l'Ebre | Ebro Delta |
 | Regió Virtual | Online crimes |
