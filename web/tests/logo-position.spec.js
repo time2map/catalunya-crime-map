@@ -11,37 +11,44 @@ test('logo image loads (not broken)', async ({ page }) => {
   expect(naturalWidth).toBeGreaterThan(0);
 });
 
-test('logo is to the left of the controls panel', async ({ page }) => {
+test('logo is inside the top-left brand panel', async ({ page }) => {
   await page.goto('/');
   await page.waitForSelector('canvas', { timeout: 15000 });
 
-  const logoBox = await page.locator('.logo-float').boundingBox();
-  const controlsBox = await page.locator('.controls').boundingBox();
+  const brandBox = await page.locator('.app-brand').boundingBox();
+  const logoBox  = await page.locator('.logo-img').boundingBox();
 
+  expect(brandBox).not.toBeNull();
   expect(logoBox).not.toBeNull();
-  expect(controlsBox).not.toBeNull();
 
-  // Logo left edge should align with controls left edge (within a few px)
-  expect(logoBox.x).toBeLessThan(controlsBox.x + 20);
+  // Logo should be within the brand panel
+  expect(logoBox.x).toBeGreaterThanOrEqual(brandBox.x - 1);
+  expect(logoBox.y).toBeGreaterThanOrEqual(brandBox.y - 1);
 });
 
-test('logo bottom is at or above controls top', async ({ page }) => {
+test('top panel is in the top-left corner', async ({ page }) => {
   await page.goto('/');
   await page.waitForSelector('canvas', { timeout: 15000 });
 
-  const logoBox = await page.locator('.logo-float').boundingBox();
-  const controlsBox = await page.locator('.controls').boundingBox();
-
-  expect(logoBox.y + logoBox.height).toBeLessThanOrEqual(controlsBox.y + 2);
+  const panelBox = await page.locator('.top-panel').boundingBox();
+  expect(panelBox).not.toBeNull();
+  expect(panelBox.x).toBeLessThan(50);
+  expect(panelBox.y).toBeLessThan(50);
 });
 
-test('logo stays above controls on narrow viewport', async ({ page }) => {
-  await page.setViewportSize({ width: 480, height: 700 });
+test('slider bar spans full width at the bottom', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');
   await page.waitForSelector('canvas', { timeout: 15000 });
 
-  const logoBox = await page.locator('.logo-float').boundingBox();
-  const controlsBox = await page.locator('.controls').boundingBox();
+  const sliderBox = await page.locator('.slider-bar').boundingBox();
+  expect(sliderBox).not.toBeNull();
 
-  expect(logoBox.y + logoBox.height).toBeLessThanOrEqual(controlsBox.y + 2);
+  // Full-width: starts at left edge, ends at right edge
+  expect(sliderBox.x).toBeLessThanOrEqual(2);
+  expect(sliderBox.x + sliderBox.width).toBeGreaterThanOrEqual(1278);
+
+  // Anchored to bottom
+  const viewportHeight = 800;
+  expect(sliderBox.y + sliderBox.height).toBeGreaterThanOrEqual(viewportHeight - 2);
 });

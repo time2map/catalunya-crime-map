@@ -123,22 +123,34 @@ The 12 keys used in the web app, mapped from raw CSV values:
 
 Spain comparison is not available for `home_intrusion`, `disorder`, and `drugs` (not published in MdI national summary).
 
-### Safety index weights
+### Safety index methodology
 
-| Crime type | Weight |
-|-----------|--------|
-| Homicide | 5 |
-| Sexual crimes | 4 |
-| Robbery (violent) | 3 |
-| Assault | 3 |
-| Burglary | 2 |
-| Home intrusion | 2 |
-| Car theft | 1.5 |
-| Drug offences | 1.5 |
-| Car break-in | 1 |
-| Theft | 1 |
-| Vandalism | 1 |
-| Public disorder | 1 |
+**Formula:** `Index = Σ(w_i × rate_i / avg_i) / Σw_i`
+
+Where `rate_i` is the zone's rate for crime type `i` (crimes per 1,000 residents), `avg_i` is the reference average (Catalan per-year average, or Spain national average for 2025), and `w_i` is the severity weight.
+
+A score of **1.0** equals the reference average. Below 1.0 = safer than average. Above 1.0 = riskier.
+
+**Weights** are manually assigned based on perceived severity. They are not derived from statistical models, conviction lengths, or victim surveys — this is a deliberate simplification for a public-facing visualisation.
+
+| Crime type | Weight | Rationale |
+|-----------|--------|-----------|
+| Homicide | 5 | Highest severity, irreversible harm |
+| Sexual crimes | 4 | Severe trauma, often underreported |
+| Robbery (violent) | 3 | Direct physical threat |
+| Assault | 3 | Direct physical harm |
+| Burglary | 2 | Property + personal security |
+| Home intrusion | 2 | Violation of personal space |
+| Car theft | 1.5 | Significant economic impact |
+| Drug offences | 1.5 | Public health + order |
+| Car break-in | 1 | Baseline |
+| Theft | 1 | Baseline |
+| Vandalism | 1 | Baseline |
+| Public disorder | 1 | Baseline |
+
+**Note on homicide weight:** Homicide rates are very low (0.003–0.05 per 1,000) and highly variable in small zones — a single incident can produce a ratio of 10–40× the average. The ×5 weight amplifies this instability. For small ABP zones, treat homicide-driven index spikes as statistical noise rather than a reliable signal.
+
+**vs Spain index** uses 9 of 12 types — `home_intrusion`, `disorder`, and `drugs` are excluded because MdI national figures do not publish equivalent breakdowns. Spain data is 2025 only.
 
 ## Limitations
 

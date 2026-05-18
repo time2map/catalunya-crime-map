@@ -1,4 +1,5 @@
 import { CRIME_KEYS, CRIME_LABELS, SPAIN_EXCLUDED } from "../utils/data.js";
+import InfoTooltip from "./InfoTooltip.jsx";
 
 function fmt(v, digits = 2) {
   if (v == null) return "n/a";
@@ -30,7 +31,9 @@ export default function SidePanel({ abpCode, stats, metric, year, onClose }) {
 
       <div className="index-cards">
         <div className="index-card">
-          <div className="index-label">Safety vs Catalonia ({year})</div>
+          <div className="index-label">
+            Safety vs Catalonia ({year}) <InfoTooltip />
+          </div>
           <div className={`index-value ${idxCat > 1.2 ? "bad" : idxCat < 0.8 ? "good" : ""}`}>
             {fmt(idxCat, 3)}
           </div>
@@ -39,7 +42,9 @@ export default function SidePanel({ abpCode, stats, metric, year, onClose }) {
           )}
         </div>
         <div className="index-card">
-          <div className="index-label">Safety vs Spain (2025)</div>
+          <div className="index-label">
+            Safety vs Spain (2025) <InfoTooltip />
+          </div>
           <div className={`index-value ${idxSpain > 1.2 ? "bad" : idxSpain < 0.8 ? "good" : ""}`}>
             {fmt(idxSpain, 3)}
           </div>

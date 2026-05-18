@@ -1,5 +1,6 @@
 import { buildClasses, NO_DATA, valueToColor } from "../utils/colors.js";
 import { CRIME_LABELS } from "../utils/data.js";
+import InfoTooltip from "./InfoTooltip.jsx";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -74,8 +75,10 @@ export default function Legend({ breaks, metric, references }) {
 
   return (
     <div className="legend">
-      {/* Title */}
-      <div className="legend-title">{label}</div>
+      <div className="legend-title">
+        {label}
+        {isIndex && <InfoTooltip />}
+      </div>
       {!isIndex && <div className="legend-unit muted">per 1,000 residents</div>}
 
       {/* Index explanation */}
@@ -121,6 +124,14 @@ export default function Legend({ breaks, metric, references }) {
       {/* Footer */}
       <div className="legend-footer muted">
         {isSpainIndex ? "Spain data: 2025 only" : "Historical range · 2019–2026"}
+      </div>
+
+      <div className="legend-attribution">
+        <a href="https://mossos.gencat.cat" target="_blank" rel="noopener noreferrer">Mossos d'Esquadra</a>
+        {" · "}
+        <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>
+        {" · "}
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OSM</a>
       </div>
     </div>
   );

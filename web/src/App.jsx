@@ -17,6 +17,9 @@ export default function App() {
   const [selectedYear, setSelectedYear] = useState(2025);
   const [selectedAbp, setSelectedAbp] = useState(null);
   const [hoveredAbp, setHoveredAbp] = useState(null);
+  const [panelExpanded, setPanelExpanded] = useState(
+    typeof window !== "undefined" ? window.innerWidth > 640 : true
+  );
 
   useEffect(() => {
     const base = import.meta.env.BASE_URL;
@@ -35,7 +38,6 @@ export default function App() {
       });
   }, []);
 
-  // Enrich GeoJSON features with current metric value
   const enrichedGeoData = useMemo(() => {
     if (!geoData || !statsData) return null;
     return {
@@ -45,30 +47,30 @@ export default function App() {
         properties: {
           ...f.properties,
           _value: getValueForFeature(statsData, f.properties.abp_c, selectedMetric, selectedYear),
+          _cat_idx: getValueForFeature(statsData, f.properties.abp_c, "safety_index_cat", selectedYear),
+          _spain_idx: getValueForFeature(statsData, f.properties.abp_c, "safety_index_spain", 2025),
+          _cat_rank: statsData[f.properties.abp_c]?.years?.[String(selectedYear)]?.safety_rank_cat ?? null,
         },
       })),
     };
   }, [geoData, statsData, selectedMetric, selectedYear]);
 
-  // Global breaks — stable across years, change only when metric changes
   const globalBreaks = useMemo(
     () => computeGlobalBreaks(statsData, selectedMetric),
     [statsData, selectedMetric]
   );
 
-  // Reference values for legend annotations (cat_avg, spain_avg)
   const references = useMemo(
     () => getReferences(statsData, selectedMetric),
     [statsData, selectedMetric]
   );
 
-  // Disable year slider when viewing Spain-only metric
   const yearDisabled = selectedMetric === "safety_index_spain";
 
   if (loading) {
     return (
       <div className="loading">
-        Loading data… <br />
+        Loading data…<br />
         <small>Make sure build_safety_gpkg.py has been run first.</small>
       </div>
     );
@@ -77,10 +79,8 @@ export default function App() {
   if (error) {
     return (
       <div className="loading error">
-        <strong>Failed to load data</strong>
-        <br />
-        <code>{error}</code>
-        <br />
+        <strong>Failed to load data</strong><br />
+        <code>{error}</code><br />
         <small>Run build_safety_gpkg.py then restart the dev server.</small>
       </div>
     );
@@ -88,10 +88,6 @@ export default function App() {
 
   return (
     <div className="app">
-      <header className="header">
-        <h1>Catalunya Crime Map</h1>
-      </header>
-
       <div className="main">
         <div className="map-area">
           <Map
@@ -101,14 +97,30 @@ export default function App() {
             hoveredAbp={hoveredAbp}
             onHover={setHoveredAbp}
             onClick={setSelectedAbp}
+            selectedMetric={selectedMetric}
           />
 
-          <div className="bottom-area">
-            <div className="logo-float">
+          {/* Top-left panel: title + pills + legend */}
+          <div className="top-panel">
+            <div className="app-brand">
               <LogoBar />
+              <h1 className="app-title">Catalunya Crimes</h1>
+              <button
+                className="panel-toggle"
+                onClick={() => setPanelExpanded((v) => !v)}
+                aria-label={panelExpanded ? "Collapse panel" : "Expand panel"}
+              >
+                <svg
+                  width="14" height="14" viewBox="0 0 14 14" fill="none"
+                  style={{ transform: panelExpanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}
+                >
+                  <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
             </div>
-            <div className="controls">
-              <div className="controls-left">
+
+            {panelExpanded && (
+              <>
                 <PillSelector
                   selectedMetric={selectedMetric}
                   onChange={(m) => {
@@ -116,22 +128,25 @@ export default function App() {
                     if (m === "safety_index_spain") setSelectedYear(2025);
                   }}
                 />
-                <YearSlider
-                  year={selectedYear}
-                  onChange={setSelectedYear}
-                  disabled={yearDisabled}
-                />
-              </div>
-            </div>
+                {globalBreaks && (
+                  <Legend
+                    breaks={globalBreaks}
+                    metric={selectedMetric}
+                    references={references}
+                  />
+                )}
+              </>
+            )}
           </div>
 
-          {globalBreaks && (
-            <Legend
-              breaks={globalBreaks}
-              metric={selectedMetric}
-              references={references}
+          {/* Bottom slider */}
+          <div className="slider-bar">
+            <YearSlider
+              year={selectedYear}
+              onChange={setSelectedYear}
+              disabled={yearDisabled}
             />
-          )}
+          </div>
         </div>
 
         {selectedAbp && statsData && (
