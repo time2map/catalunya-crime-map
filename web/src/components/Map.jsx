@@ -4,6 +4,18 @@ import { buildFillExpression } from "../utils/colors.js";
 import { CRIME_LABELS } from "../utils/data.js";
 
 const STYLE_URL = "https://tiles.openfreemap.org/styles/dark";
+
+function parseMapHash() {
+  const m = window.location.hash.match(/^#map=([\d.]+)\/([-\d.]+)\/([-\d.]+)/);
+  if (!m) return null;
+  return { zoom: parseFloat(m[1]), center: [parseFloat(m[3]), parseFloat(m[2])] };
+}
+
+function updateMapHash(map) {
+  const { lat, lng } = map.getCenter();
+  const zoom = map.getZoom();
+  history.replaceState(null, "", `#map=${zoom.toFixed(2)}/${lat.toFixed(4)}/${lng.toFixed(4)}`);
+}
 const SOURCE_ID = "abp";
 const FILL_LAYER = "abp-fill";
 const OUTLINE_LAYER = "abp-outline";
@@ -24,11 +36,12 @@ export default function Map({ geoData, globalBreaks, selectedAbp, hoveredAbp, on
   selectedMetricRef.current = selectedMetric;
 
   useEffect(() => {
+    const saved = parseMapHash();
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: STYLE_URL,
-      center: [1.7, 41.7],
-      zoom: 7,
+      center: saved?.center ?? [1.7, 41.7],
+      zoom: saved?.zoom ?? 7,
       maxBounds: [[-1, 40], [5, 43.5]],
       attributionControl: false,
     });
@@ -204,6 +217,8 @@ export default function Map({ geoData, globalBreaks, selectedAbp, hoveredAbp, on
         if (abp_c) onClick(abp_c);
       });
     });
+
+    map.on("moveend", () => updateMapHash(map));
 
     mapRef.current = map;
     return () => map.remove();
