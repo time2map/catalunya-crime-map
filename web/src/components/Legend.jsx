@@ -129,6 +129,8 @@ export default function Legend({ breaks, metric, references }) {
       <div className="legend-attribution">
         <a href="https://mossos.gencat.cat" target="_blank" rel="noopener noreferrer">Mossos d'Esquadra</a>
         {" · "}
+        <a href="https://www.icgc.cat" target="_blank" rel="noopener noreferrer">ICGC</a>
+        {" · "}
         <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>
         {" · "}
         <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OSM</a>
