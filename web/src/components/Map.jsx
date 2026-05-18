@@ -62,7 +62,7 @@ export default function Map({ geoData, globalBreaks, selectedAbp, hoveredAbp, on
         type: "line",
         source: SOURCE_ID,
         paint: {
-          "line-color": "rgba(0,0,0,0.35)",
+          "line-color": "rgba(255,255,255,0.2)",
           "line-width": 0.5,
         },
       });
@@ -110,6 +110,44 @@ export default function Map({ geoData, globalBreaks, selectedAbp, hoveredAbp, on
           "text-halo-width": 1.2,
         },
       });
+
+      // Lift place-name labels above the choropleth fill
+      map.getStyle().layers
+        .filter(l => l.type === "symbol" && (
+          l["source-layer"] === "place" ||
+          (l.id && l.id.toLowerCase().includes("place"))
+        ))
+        .forEach(l => {
+          map.moveLayer(l.id, HOVER_LAYER);
+          map.setPaintProperty(l.id, "text-halo-width", 0);
+        });
+
+      // Lift street-name labels above the choropleth fill
+      map.getStyle().layers
+        .filter(l => l.type === "symbol" && (
+          l["source-layer"] === "transportation_name" ||
+          (l.id && l.id.toLowerCase().includes("road")) ||
+          (l.id && l.id.toLowerCase().includes("street"))
+        ))
+        .forEach(l => {
+          map.moveLayer(l.id, HOVER_LAYER);
+          map.setPaintProperty(l.id, "text-halo-width", 0.5);
+          map.setPaintProperty(l.id, "text-halo-color", "rgba(80,80,80,0.6)");
+          map.setPaintProperty(l.id, "text-color", "rgba(255,255,255,0.4)");
+        });
+
+      // Lift building layers: transparent fill, hairline white outline only
+      map.getStyle().layers
+        .filter(l => l.type === "fill" && (
+          l["source-layer"] === "building" ||
+          (l.id && l.id.toLowerCase().includes("building"))
+        ))
+        .forEach(l => {
+          map.moveLayer(l.id, HOVER_LAYER);
+          map.setPaintProperty(l.id, "fill-color", "rgba(0,0,0,0)");
+          map.setPaintProperty(l.id, "fill-opacity", 1);
+          map.setPaintProperty(l.id, "fill-outline-color", "rgba(255,255,255,0.1)");
+        });
 
       sourceReadyRef.current = true;
 
