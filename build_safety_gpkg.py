@@ -16,12 +16,12 @@ Run: arch -arm64 python3 build_safety_gpkg.py
 """
 
 import json
+import subprocess
 import warnings
 from pathlib import Path
 
 import geopandas as gpd
 import pandas as pd
-from shapely.geometry import mapping
 
 warnings.filterwarnings("ignore")
 
@@ -119,10 +119,56 @@ def load_crime_data() -> pd.DataFrame:
 # Step 3: load ABP polygons
 # ---------------------------------------------------------------------------
 
+_ICGC_GEOJSON_URL = (
+    "https://raw.githubusercontent.com/OpenICGC/mapa-delinquencial"
+    "/master/data/Arees_Basiques_Policia.geojson"
+)
+
+# Official ICGC name → our abp_d (only entries that differ after normalization)
+_ICGC_NAME_OVERRIDES: dict[str, str] = {
+    "ABP Segrià - Garrigues - Pla d'Urgell": "ABP Segrià",
+}
+
+
+def _norm_abp_name(s: str) -> str:
+    return s.strip().lower().replace("abp ", "").replace("  ", " ")
+
+
 def load_polygons() -> gpd.GeoDataFrame:
-    gdf = gpd.read_file(DATA_DIR / "abp_polygons_clean.geojson")
-    # Keep only polygons with valid abp_c and population
-    gdf = gdf[gdf["abp_c"].notna() & (gdf["abp_pob"] > 0)].copy()
+    # Download official ICGC geometry if not cached
+    icgc_path = DATA_DIR / "Arees_Basiques_Policia.geojson"
+    if not icgc_path.exists():
+        print("  Downloading official ABP geometry from OpenICGC...")
+        subprocess.run(["curl", "-L", "-o", str(icgc_path), _ICGC_GEOJSON_URL], check=True)
+        print(f"  Saved → {icgc_path.name}")
+
+    geom_gdf = gpd.read_file(icgc_path)[["abp", "geometry"]].copy()
+    geom_gdf["_join"] = geom_gdf["abp"].apply(
+        lambda n: _norm_abp_name(_ICGC_NAME_OVERRIDES.get(n, n))
+    )
+
+    # Attributes (abp_c, abp_d, abp_pob, abp_csv) from vector-tile-derived file
+    attr_gdf = gpd.read_file(DATA_DIR / "abp_polygons_clean.geojson")
+    attr_gdf = attr_gdf[attr_gdf["abp_c"].notna() & (attr_gdf["abp_pob"] > 0)].copy()
+    attr_gdf["_join"] = attr_gdf["abp_d"].apply(_norm_abp_name)
+
+    # Replace tile geometry with official ICGC geometry (join by normalized name)
+    merged = attr_gdf.drop(columns="geometry").merge(
+        geom_gdf[["_join", "geometry"]], on="_join", how="left"
+    ).drop(columns="_join")
+    gdf = gpd.GeoDataFrame(merged, geometry="geometry", crs="EPSG:4326")
+
+    # Fall back to tile geometry for zones missing from official file (e.g. newer ABPs)
+    missing = gdf.geometry.isna() | gdf.geometry.is_empty
+    if missing.any():
+        tile_geom = gpd.read_file(DATA_DIR / "abp_polygons_clean.geojson").set_index("abp_c")["geometry"]
+        for idx in gdf[missing].index:
+            fallback = tile_geom.get(gdf.at[idx, "abp_c"])
+            if fallback is not None:
+                gdf.at[idx, "geometry"] = fallback
+        print(f"  Tile geometry fallback for: {list(gdf.loc[missing, 'abp_d'])}")
+
+    gdf = gdf[gdf.geometry.notna() & ~gdf.geometry.is_empty].copy()
     return gdf
 
 
@@ -342,27 +388,30 @@ def build_web_exports(
         for _, r in stats_df.iterrows()
     }
 
-    # --- abp.geojson (simplified polygons) ---
-    simplified = gdf.copy()
-    simplified["geometry"] = simplified.geometry.simplify(0.001, preserve_topology=True)
-    abp_geojson_features = []
-    for _, row in simplified.iterrows():
-        if row.geometry is None or row.geometry.is_empty:
-            continue
-        abp_geojson_features.append({
-            "type": "Feature",
-            "geometry": mapping(row.geometry),
-            "properties": {
-                "abp_c": row["abp_c"],
-                "abp_d": row.get("abp_d", ""),
-                "abp_pob": int(row.get("abp_pob", 0)),
-            },
-        })
+    # --- abp.geojson (topologically simplified polygons via mapshaper) ---
+    # Build a minimal GeoDataFrame with only the properties needed for the web export
+    web_gdf = gdf[["abp_c", "abp_d", "abp_pob", "geometry"]].copy()
+    web_gdf["abp_pob"] = web_gdf["abp_pob"].astype(int)
+    web_gdf = web_gdf[web_gdf.geometry.notna() & ~web_gdf.geometry.is_empty]
 
-    abp_geojson = {"type": "FeatureCollection", "features": abp_geojson_features}
+    import tempfile
+    with tempfile.NamedTemporaryFile(suffix=".geojson", delete=False) as tmp:
+        tmp_in = tmp.name
+    tmp_out = tmp_in.replace(".geojson", "_simplified.geojson")
+
+    web_gdf.to_file(tmp_in, driver="GeoJSON")
+    # mapshaper topology-preserving simplification (no gaps at shared boundaries)
+    subprocess.run(
+        ["npx", "--yes", "mapshaper", tmp_in, "-simplify", "5%",
+         "-o", f"format=geojson", tmp_out],
+        check=True, capture_output=True,
+    )
     abp_path = WEB_DATA_DIR / "abp.geojson"
-    abp_path.write_text(json.dumps(abp_geojson, ensure_ascii=False, separators=(",", ":")))
-    print(f"  Saved → web/public/data/abp.geojson ({len(abp_geojson_features)} features)")
+    Path(tmp_out).rename(abp_path)
+    Path(tmp_in).unlink(missing_ok=True)
+
+    size_kb = abp_path.stat().st_size // 1024
+    print(f"  Saved → web/public/data/abp.geojson ({len(web_gdf)} features, {size_kb} KB)")
 
     # --- stats.json ---
     stats_out: dict = {}
