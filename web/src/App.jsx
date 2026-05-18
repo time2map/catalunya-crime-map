@@ -103,19 +103,26 @@ export default function App() {
             onClick={setSelectedAbp}
           />
 
-          <div className="controls">
-            <PillSelector
-              selectedMetric={selectedMetric}
-              onChange={(m) => {
-                setSelectedMetric(m);
-                if (m === "safety_index_spain") setSelectedYear(2025);
-              }}
-            />
-            <YearSlider
-              year={selectedYear}
-              onChange={setSelectedYear}
-              disabled={yearDisabled}
-            />
+          <div className="bottom-area">
+            <div className="logo-float">
+              <LogoBar />
+            </div>
+            <div className="controls">
+              <div className="controls-left">
+                <PillSelector
+                  selectedMetric={selectedMetric}
+                  onChange={(m) => {
+                    setSelectedMetric(m);
+                    if (m === "safety_index_spain") setSelectedYear(2025);
+                  }}
+                />
+                <YearSlider
+                  year={selectedYear}
+                  onChange={setSelectedYear}
+                  disabled={yearDisabled}
+                />
+              </div>
+            </div>
           </div>
 
           {globalBreaks && (
@@ -128,16 +135,13 @@ export default function App() {
         </div>
 
         {selectedAbp && statsData && (
-          <div className="side-section">
-            <LogoBar />
-            <SidePanel
-              abpCode={selectedAbp}
-              stats={statsData[selectedAbp]}
-              metric={selectedMetric}
-              year={selectedYear}
-              onClose={() => setSelectedAbp(null)}
-            />
-          </div>
+          <SidePanel
+            abpCode={selectedAbp}
+            stats={statsData[selectedAbp]}
+            metric={selectedMetric}
+            year={selectedYear}
+            onClose={() => setSelectedAbp(null)}
+          />
         )}
       </div>
     </div>

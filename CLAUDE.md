@@ -85,3 +85,7 @@ Deployment is automatic via `.github/workflows/deploy.yml` on every push to `mai
 ## Do not touch
 
 `extract_abp_polygons.py` — do not modify without explicit instruction.
+
+## Тестирование
+
+- if I ask to test the app it means you have to use playwrite to at least to do some basic tests

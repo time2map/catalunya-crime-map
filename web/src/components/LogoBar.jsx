@@ -8,7 +8,7 @@ export default function LogoBar() {
         title="Visit time2map.com"
         className="logo-link"
       >
-        <img src="/time2map-logo.svg" alt="time2map" className="logo-img" />
+        <img src={`${import.meta.env.BASE_URL}time2map-logo.svg`} alt="time2map" className="logo-img" />
       </a>
     </div>
   );

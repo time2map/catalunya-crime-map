@@ -53,15 +53,34 @@ body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--t
   flex: 1;
 }
 
+/* ── Bottom area (controls + logo overlay) ───────────────── */
+.bottom-area {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.logo-float {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  padding: 6px 8px;
+}
+
 /* ── Controls bar ────────────────────────────────────────── */
 .controls {
   background: var(--surface);
   border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.controls-left {
+  flex: 1;
   padding: 8px 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex-shrink: 0;
 }
 
 /* ── Pill selector ───────────────────────────────────────── */
@@ -141,51 +160,39 @@ body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--t
 .legend-footer { font-size: 0.65rem; margin-top: 6px; }
 .muted { color: var(--muted); }
 
-/* ── Side section (logo + panel) ─────────────────────────── */
-.side-section {
-  display: flex;
-  flex-direction: column;
-  width: 360px;
-  background: var(--surface);
-  border-left: 1px solid var(--border);
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
 /* ── Logo bar ────────────────────────────────────────────── */
 .logo-bar {
-  padding: 12px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
   display: flex;
-  justify-content: center;
   align-items: center;
-  flex-shrink: 0;
 }
 
 .logo-link {
   display: inline-flex;
   padding: 4px;
   border-radius: 4px;
-  transition: background 0.2s;
+  transition: opacity 0.2s;
   cursor: pointer;
+  opacity: 0.7;
 }
 
 .logo-link:hover {
-  background: rgba(59, 130, 246, 0.1);
+  opacity: 1;
 }
 
 .logo-img {
-  height: 40px;
+  height: 28px;
   width: auto;
   display: block;
 }
 
 /* ── Side panel ──────────────────────────────────────────── */
 .side-panel {
+  width: 360px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
   overflow-y: auto;
   padding: 16px;
-  flex: 1;
+  flex-shrink: 0;
   position: relative;
 }
 
