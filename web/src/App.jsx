@@ -165,17 +165,17 @@ export default function App() {
               disabled={yearDisabled}
             />
           </div>
-        </div>
 
-        {selectedAbp && statsData && (
-          <SidePanel
-            abpCode={selectedAbp}
-            stats={statsData[selectedAbp]}
-            metric={selectedMetric}
-            year={selectedYear}
-            onClose={() => setSelectedAbp(null)}
-          />
-        )}
+          {selectedAbp && statsData && (
+            <SidePanel
+              abpCode={selectedAbp}
+              stats={statsData[selectedAbp]}
+              metric={selectedMetric}
+              year={selectedYear}
+              onClose={() => setSelectedAbp(null)}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
