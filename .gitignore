@@ -21,3 +21,4 @@ venv/
 # Web app build artifacts
 web/node_modules/
 web/dist/
+/docs/posts/
