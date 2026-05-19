@@ -1,6 +1,6 @@
-# Catalunya Crime Map — Mossos d'Esquadra Data
+# Catalunya Crime Map — Safety index and neighbourhood comparison
 
-Interactive choropleth map of crime rates across 59 Àrees Bàsiques Policials (ABP) in Catalunya, 2019–2025.
+Crime map with weighted safety indices for 59 Àrees Bàsiques Policials (ABP) in Catalunya, 2019–2025. Compare neighbourhood crime rates against Catalan and Spain averages across 12 types.
 
 **Live map → [time2map.github.io/catalunya-crime-map](https://time2map.github.io/catalunya-crime-map/)**
 
@@ -43,6 +43,7 @@ The interactive map is built with React 19 + Vite + MapLibre GL JS 5.
 - Click any zone to open a detail panel with per-type rates, Catalunya and Spain averages, and ratio columns
 - Safety Index vs Catalunya — weighted average of 12 crime rates relative to the Catalan mean per year
 - Safety Index vs Spain — weighted average of 9 crime rates relative to MdI national figures (2025 only)
+- EN / ES language switcher; language persisted in URL (`?lang=es`) for shareable links
 
 ### Run locally
 
