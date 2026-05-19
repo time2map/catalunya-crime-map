@@ -43,6 +43,16 @@ export default function App() {
   const [panelExpanded, setPanelExpanded] = useState(
     typeof window !== "undefined" ? window.innerWidth > 640 : true
   );
+  const SPARKLINE_CYCLE = ["trend5", "trend2", "sparkline", null];
+  const [sparklineMode, setSparklineMode] = useState("trend5");
+
+  function cycleSparklineMode() {
+    setSparklineMode(cur => {
+      const idx = SPARKLINE_CYCLE.indexOf(cur);
+      return SPARKLINE_CYCLE[(idx + 1) % SPARKLINE_CYCLE.length];
+    });
+  }
+
 
   useEffect(() => {
     const base = import.meta.env.BASE_URL;
@@ -90,6 +100,10 @@ export default function App() {
 
   const yearDisabled = selectedMetric === "safety_index_spain";
 
+  useEffect(() => {
+    if (yearDisabled) setSparklineMode(null);
+  }, [yearDisabled]);
+
   if (loading) {
     return <div className="loading">{t("app.loading")}</div>;
   }
@@ -115,6 +129,9 @@ export default function App() {
             onHover={setHoveredAbp}
             onClick={setSelectedAbp}
             selectedMetric={selectedMetric}
+            sparklineMode={sparklineMode}
+            rawGeoData={geoData}
+            statsData={statsData}
           />
 
           {/* Top-left panel: title + pills + legend */}
@@ -146,11 +163,14 @@ export default function App() {
                     if (m === "safety_index_spain") setSelectedYear(2025);
                   }}
                 />
-                {globalBreaks && (
+            {globalBreaks && (
                   <Legend
                     breaks={globalBreaks}
                     metric={selectedMetric}
                     references={references}
+                    sparklineMode={sparklineMode}
+                    onCycleSparkline={() => !yearDisabled && cycleSparklineMode()}
+                    sparklineDisabled={yearDisabled}
                   />
                 )}
               </>

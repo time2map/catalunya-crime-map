@@ -59,6 +59,17 @@ const en = {
     vandalism: "Vandalism",
     disorder: "Public disorder",
   },
+  trendTooltip: {
+    title: "How trend arrows work",
+    method: "Linear regression slope, normalised by the mean — gives annual relative change rate.",
+    windows: "5Y = 2021–2025   ·   2Y = 2024–2025",
+    scaleTitle: "Scale (% per year):",
+    worse2:  "sharply worse",
+    worse1:  "slightly worse",
+    stable:  "stable",
+    better1: "slightly better",
+    better2: "sharply better",
+  },
   pill: {
     spainTooltip: "2025 only · 9 of 12 crime types",
   },

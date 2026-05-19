@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { buildClasses, NO_DATA, valueToColor } from "../utils/colors.js";
 import { CRIME_LABELS } from "../utils/data.js";
-import InfoTooltip from "./InfoTooltip.jsx";
+import LegendInfoButton from "./LegendInfoButton.jsx";
 
 function fmtBreak(v, isIndex) {
   if (v == null) return "—";
@@ -58,7 +58,13 @@ function RefRow({ label, value, breaks, unit }) {
   );
 }
 
-export default function Legend({ breaks, metric, references }) {
+function sparklineModeLabel(mode) {
+  if (mode === "trend5") return "Trends 5Y";
+  if (mode === "trend2") return "Trends 2Y";
+  return "Trends";
+}
+
+export default function Legend({ breaks, metric, references, sparklineMode, onCycleSparkline, sparklineDisabled }) {
   const { t } = useTranslation();
   if (!breaks) return null;
 
@@ -74,7 +80,28 @@ export default function Legend({ breaks, metric, references }) {
     <div className="legend">
       <div className="legend-title">
         {label}
-        {isIndex && <InfoTooltip />}
+      </div>
+
+      <div className="legend-corner">
+        <button
+          className={`sparkline-corner-btn${sparklineMode ? " active" : ""}${sparklineDisabled ? " disabled" : ""}`}
+          onClick={onCycleSparkline}
+          disabled={sparklineDisabled}
+          title="Cycle trend mode: 5Y → 2Y → Chart → off"
+        >
+          {(sparklineMode === "trend5" || sparklineMode === "trend2") ? (
+            <svg width="10" height="10" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+              <line x1="1" y1="12" x2="12" y2="2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+              <polyline points="7,2 12,2 12,7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            </svg>
+          ) : (
+            <svg width="10" height="10" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+              <polyline points="1,11 4,6 7,8.5 10,2.5 12,4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+          {sparklineModeLabel(sparklineMode)}
+        </button>
+        <LegendInfoButton isIndex={isIndex} />
       </div>
       {!isIndex && <div className="legend-unit muted">{t("legend.perThousand")}</div>}
 

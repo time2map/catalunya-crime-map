@@ -59,6 +59,17 @@ const es = {
     vandalism: "Vandalismo",
     disorder: "Desorden público",
   },
+  trendTooltip: {
+    title: "Cómo funcionan las flechas de tendencia",
+    method: "Pendiente de regresión lineal, normalizada por la media — tasa de cambio anual relativa.",
+    windows: "5A = 2021–2025   ·   2A = 2024–2025",
+    scaleTitle: "Escala (% por año):",
+    worse2:  "empeora mucho",
+    worse1:  "empeora algo",
+    stable:  "estable",
+    better1: "mejora algo",
+    better2: "mejora mucho",
+  },
   pill: {
     spainTooltip: "Solo 2025 · 9 de 12 tipos de delito",
   },

@@ -204,8 +204,42 @@ body {
   box-shadow: 0 0 14px var(--accent-glow);
 }
 
+/* ── Sparkline toggle ────────────────────────────────────── */
+.sparkline-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.71rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  align-self: flex-start;
+}
+.sparkline-toggle-btn:hover {
+  color: var(--text);
+  border-color: rgba(255,255,255,0.18);
+}
+.sparkline-toggle-btn.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+.sparkline-toggle-btn.disabled {
+  opacity: 0.38;
+  pointer-events: none;
+}
+
 /* ── Legend ──────────────────────────────────────────────── */
 .legend {
+  position: relative;
   background: var(--glass-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -214,11 +248,50 @@ body {
   padding: 12px 14px;
   font-size: 0.71rem;
 }
+.legend-corner {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.sparkline-corner-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: transparent;
+  color: var(--muted);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1.4;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.sparkline-corner-btn:hover {
+  color: var(--text);
+  border-color: rgba(255,255,255,0.25);
+}
+.sparkline-corner-btn.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+.sparkline-corner-btn.disabled {
+  opacity: 0.38;
+  pointer-events: none;
+}
 .legend-title {
   font-weight: 700;
   font-size: 0.78rem;
   margin-bottom: 2px;
   color: var(--text);
+  padding-right: 92px;
 }
 .legend-unit { font-size: 0.66rem; margin-bottom: 6px; color: var(--muted); }
 .legend-desc {
@@ -488,6 +561,12 @@ body {
   color: var(--muted);
   background: rgba(255, 255, 255, 0.06);
 }
+.info-btn--corner {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  margin-left: 0;
+}
 
 /* ── Info modal ──────────────────────────────────────────── */
 .info-modal-backdrop {
@@ -569,6 +648,43 @@ body {
 .info-modal-weights b {
   color: var(--muted);
   font-weight: 500;
+}
+.info-modal-divider {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin: 14px 0 12px;
+}
+
+/* ── Trend arrow modal table ─────────────────────────────── */
+.trend-arrow-table {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.trend-arrow-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.67rem;
+}
+.trend-arrow-sym {
+  font-size: 1rem;
+  font-weight: 700;
+  width: 14px;
+  flex-shrink: 0;
+  text-align: center;
+  line-height: 1;
+}
+.trend-arrow-thresh {
+  width: 78px;
+  flex-shrink: 0;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 0.66rem;
+}
+.trend-arrow-desc {
+  color: var(--muted);
 }
 
 /* ── Loading / error ─────────────────────────────────────── */

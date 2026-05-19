@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { CRIME_KEYS, CRIME_LABELS, SPAIN_EXCLUDED } from "../utils/data.js";
-import InfoTooltip from "./InfoTooltip.jsx";
+import LegendInfoButton from "./LegendInfoButton.jsx";
 
 function fmt(v, digits = 2) {
   if (v == null) return "n/a";
@@ -34,7 +34,7 @@ export default function SidePanel({ abpCode, stats, metric, year, onClose }) {
       <div className="index-cards">
         <div className="index-card">
           <div className="index-label">
-            {t("panel.safetyVsCat", { year })} <InfoTooltip />
+            {t("panel.safetyVsCat", { year })} <LegendInfoButton isIndex={true} />
           </div>
           <div className={`index-value ${idxCat > 1.2 ? "bad" : idxCat < 0.8 ? "good" : ""}`}>
             {fmt(idxCat, 3)}
@@ -45,7 +45,7 @@ export default function SidePanel({ abpCode, stats, metric, year, onClose }) {
         </div>
         <div className="index-card">
           <div className="index-label">
-            {t("panel.safetyVsSpain")} <InfoTooltip />
+            {t("panel.safetyVsSpain")} <LegendInfoButton isIndex={true} />
           </div>
           <div className={`index-value ${idxSpain > 1.2 ? "bad" : idxSpain < 0.8 ? "good" : ""}`}>
             {fmt(idxSpain, 3)}

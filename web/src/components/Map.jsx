@@ -1,7 +1,86 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import { buildFillExpression } from "../utils/colors.js";
-import { CRIME_LABELS } from "../utils/data.js";
+import { CRIME_LABELS, YEARS } from "../utils/data.js";
+
+function getBBoxCenter(geometry) {
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  const rings = geometry.type === "Polygon"
+    ? geometry.coordinates
+    : geometry.coordinates.flat(1);
+  for (const ring of rings) {
+    for (const [x, y] of ring) {
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    }
+  }
+  return [(minX + maxX) / 2, (minY + maxY) / 2];
+}
+
+function getSparklineValues(statsData, abpCode, metric) {
+  const abp = statsData?.[abpCode];
+  if (!abp) return YEARS.map(() => null);
+  return YEARS.map(year => {
+    if (metric === "safety_index_cat") return abp.years?.[year]?.safety_index_cat ?? null;
+    return abp.years?.[year]?.[metric]?.rate ?? null;
+  });
+}
+
+function buildSparklineSVG(values) {
+  const W = 54, H = 22, pad = 3;
+  const indexed = values.map((v, i) => [i, v]).filter(([, v]) => v != null);
+  if (indexed.length < 2) return null;
+  const nums = indexed.map(([, v]) => v);
+  const min = Math.min(...nums);
+  const max = Math.max(...nums);
+  const range = max - min || 1;
+  const n = values.length;
+  const w = W - pad * 2;
+  const h = H - pad * 2;
+  const toX = i => pad + (i / (n - 1)) * w;
+  const toY = v => pad + h - ((v - min) / range) * h;
+  const points = indexed.map(([i, v]) => `${toX(i).toFixed(1)},${toY(v).toFixed(1)}`).join(" ");
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><rect width="${W}" height="${H}" rx="3" fill="rgba(0,0,0,0.62)"/><polyline points="${points}" fill="none" stroke="rgba(255,255,255,0.88)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+function computeTrendSlope(values) {
+  const pairs = values.map((v, i) => [i, v]).filter(([, v]) => v != null);
+  if (pairs.length < 2) return null;
+  const n = pairs.length;
+  const sumX = pairs.reduce((s, [x]) => s + x, 0);
+  const sumY = pairs.reduce((s, [, y]) => s + y, 0);
+  const sumXY = pairs.reduce((s, [x, y]) => s + x * y, 0);
+  const sumX2 = pairs.reduce((s, [x]) => s + x * x, 0);
+  const denom = n * sumX2 - sumX * sumX;
+  if (denom === 0) return 0;
+  const slope = (n * sumXY - sumX * sumY) / denom;
+  const meanY = sumY / n;
+  return meanY !== 0 ? slope / meanY : 0;
+}
+
+function trendArrow(slope) {
+  if (slope === null) return null;
+  if (slope > 0.10)  return { dir: "up",         color: "#d95c50" };
+  if (slope > 0.03)  return { dir: "up-right",   color: "#e8a898" };
+  if (slope > -0.03) return { dir: "right",      color: "#94a3b8" };
+  if (slope > -0.10) return { dir: "down-right", color: "#7ec8d3" };
+                     return { dir: "down",        color: "#5aaab8" };
+}
+
+function buildArrowSVG(dir, color) {
+  const W = 26, H = 26;
+  const attrs = `stroke="${color}" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"`;
+  const shapes = {
+    "up":         `<line x1="13" y1="20" x2="13" y2="7" ${attrs}/><polyline points="9,11 13,7 17,11" ${attrs}/>`,
+    "up-right":   `<line x1="8" y1="19" x2="19" y2="8" ${attrs}/><polyline points="11,8 19,8 19,16" ${attrs}/>`,
+    "right":      `<line x1="6" y1="13" x2="20" y2="13" ${attrs}/><polyline points="15,9 20,13 15,17" ${attrs}/>`,
+    "down-right": `<line x1="8" y1="8" x2="19" y2="19" ${attrs}/><polyline points="11,19 19,19 19,11" ${attrs}/>`,
+    "down":       `<line x1="13" y1="7" x2="13" y2="20" ${attrs}/><polyline points="9,16 13,20 17,16" ${attrs}/>`,
+  };
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><circle cx="13" cy="13" r="13" fill="rgba(0,0,0,0.65)"/>${shapes[dir] ?? ""}</svg>`;
+}
 
 const STYLE_URL = "https://tiles.openfreemap.org/styles/dark";
 
@@ -23,10 +102,12 @@ const HOVER_LAYER = "abp-hover";
 const SELECTED_LAYER = "abp-selected";
 const LABEL_LAYER = "abp-labels";
 
-export default function Map({ geoData, globalBreaks, selectedAbp, hoveredAbp, onHover, onClick, selectedMetric }) {
+export default function Map({ geoData, globalBreaks, selectedAbp, hoveredAbp, onHover, onClick, selectedMetric, sparklineMode, rawGeoData, statsData }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const sourceReadyRef = useRef(false);
+  const sparklineMarkersRef = useRef([]);
+  const [mapReady, setMapReady] = useState(false);
 
   const geoDataRef = useRef(geoData);
   const globalBreaksRef = useRef(globalBreaks);
@@ -163,6 +244,7 @@ export default function Map({ geoData, globalBreaks, selectedAbp, hoveredAbp, on
         });
 
       sourceReadyRef.current = true;
+      setMapReady(true);
 
       if (geoDataRef.current) {
         map.getSource(SOURCE_ID).setData(geoDataRef.current);
@@ -246,6 +328,48 @@ export default function Map({ geoData, globalBreaks, selectedAbp, hoveredAbp, on
       map.setFilter(SELECTED_LAYER, ["==", ["get", "abp_c"], selectedAbp || ""]);
     }
   }, [selectedAbp]);
+
+  useEffect(() => {
+    sparklineMarkersRef.current.forEach(m => m.remove());
+    sparklineMarkersRef.current = [];
+
+    if (!mapReady || !mapRef.current || !sparklineMode || !rawGeoData || !statsData) return;
+    if (selectedMetric === "safety_index_spain") return;
+
+    const map = mapRef.current;
+    const trendWindow = sparklineMode === "trend5" ? YEARS.slice(-5) : sparklineMode === "trend2" ? YEARS.slice(-2) : null;
+
+    rawGeoData.features.forEach(feature => {
+      const abp_c = feature.properties?.abp_c;
+      if (!abp_c) return;
+
+      let svgHtml;
+      if (trendWindow) {
+        const abp = statsData[abp_c];
+        if (!abp) return;
+        const values = trendWindow.map(year =>
+          selectedMetric === "safety_index_cat"
+            ? abp.years?.[year]?.safety_index_cat ?? null
+            : abp.years?.[year]?.[selectedMetric]?.rate ?? null
+        );
+        const arrow = trendArrow(computeTrendSlope(values));
+        if (!arrow) return;
+        svgHtml = buildArrowSVG(arrow.dir, arrow.color);
+      } else {
+        svgHtml = buildSparklineSVG(getSparklineValues(statsData, abp_c, selectedMetric));
+      }
+
+      if (!svgHtml) return;
+      const center = getBBoxCenter(feature.geometry);
+      const el = document.createElement("div");
+      el.innerHTML = svgHtml;
+      el.style.pointerEvents = "none";
+      const marker = new maplibregl.Marker({ element: el, anchor: "center" })
+        .setLngLat(center)
+        .addTo(map);
+      sparklineMarkersRef.current.push(marker);
+    });
+  }, [sparklineMode, rawGeoData, statsData, selectedMetric, mapReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return <div ref={containerRef} className="map-container" />;
 }
