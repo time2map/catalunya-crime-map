@@ -2,7 +2,7 @@
 
 Crime map with weighted safety indices for 59 Àrees Bàsiques Policials (ABP) in Catalunya, 2019–2025. Compare neighbourhood crime rates against Catalan and Spain averages across 12 types.
 
-**Live map → [time2map.github.io/catalunya-crime-map](https://time2map.github.io/catalunya-crime-map/)**
+**Live map → [catalunya.time2map.com](https://catalunya.time2map.com/)**
 
 ![Catalunya Crime Map screenshot](docs/screenshot.png)
 
