@@ -10,7 +10,7 @@ Crime data pipeline + interactive web map for Catalunya ABP police zones.
 - Computes per-zone safety indices (vs Catalunya average, vs Spain national figures)
 - Serves the data via a React + MapLibre choropleth map deployed on GitHub Pages
 
-Live map: https://catalunya.time2map.com/ (GitHub Pages + custom domain)
+Live map: https://catalunya-crimes.time2map.com/ (GitHub Pages + custom domain)
 
 ## Repository structure
 
@@ -72,7 +72,7 @@ Build for GitHub Pages:
 npm run build   # outputs to web/dist/
 ```
 
-Deployment is automatic via `.github/workflows/deploy.yml` on every push to `main`. GitHub Pages source must be set to **GitHub Actions** in repo settings. Custom domain: `catalunya.time2map.com` (`web/public/CNAME`); DNS `CNAME` → `time2map.github.io`, then set the same domain under Settings → Pages.
+Deployment is automatic via `.github/workflows/deploy.yml` on every push to `main`. GitHub Pages source must be set to **GitHub Actions** in repo settings. Custom domain: `catalunya-crimes.time2map.com` (`web/public/CNAME`); DNS `CNAME` → `time2map.github.io`, then set the same domain under Settings → Pages.
 
 ## Key implementation notes
 
