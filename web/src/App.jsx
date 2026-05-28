@@ -29,6 +29,8 @@ function LangSwitcher() {
   );
 }
 
+const isInIframe = window.self !== window.top;
+
 export default function App() {
   const { t } = useTranslation();
   const [geoData, setGeoData] = useState(null);
@@ -185,6 +187,17 @@ export default function App() {
               disabled={yearDisabled}
             />
           </div>
+
+          {!isInIframe && (
+            <a
+              href="https://time2map.com/lab/barcelona-crime-map"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="about-corner-link"
+            >
+              {t("app.aboutLink")} ↗
+            </a>
+          )}
 
           {selectedAbp && statsData && (
             <SidePanel

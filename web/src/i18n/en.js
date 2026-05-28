@@ -4,6 +4,7 @@ const en = {
     loading: "Loading data…",
     collapsePanel: "Collapse panel",
     expandPanel: "Expand panel",
+    aboutLink: "About this map",
   },
   panel: {
     population: "Population",
@@ -33,7 +34,7 @@ const en = {
     spainAvg: "Spain average",
     spainAvg2025: "Spain avg 2025",
     spainDataNote: "Spain data: 2025 only",
-    historicalRange: "Historical range · 2019–2026",
+    historicalRange: "Historical range · 2019–2025",
   },
   slider: {
     year: "Year",

@@ -4,6 +4,7 @@ const es = {
     loading: "Cargando datos…",
     collapsePanel: "Contraer panel",
     expandPanel: "Expandir panel",
+    aboutLink: "Sobre este mapa",
   },
   panel: {
     population: "Población",
@@ -33,7 +34,7 @@ const es = {
     spainAvg: "Media España",
     spainAvg2025: "Media España 2025",
     spainDataNote: "Datos España: solo 2025",
-    historicalRange: "Rango histórico · 2019–2026",
+    historicalRange: "Rango histórico · 2019–2025",
   },
   slider: {
     year: "Año",

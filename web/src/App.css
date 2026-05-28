@@ -54,8 +54,8 @@ body {
 /* ── Top-left panel ──────────────────────────────────────── */
 .top-panel {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  top: 10px;
+  left: 10px;
   z-index: 10;
   display: flex;
   flex-direction: column;
@@ -330,6 +330,29 @@ body {
   text-decoration: none;
 }
 .legend-attribution a:hover { color: var(--text); }
+
+/* ── About this map corner link ──────────────────────────── */
+.about-corner-link {
+  position: absolute;
+  bottom: 64px;
+  right: 10px;
+  z-index: 10;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 7px 14px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.about-corner-link:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.18);
+}
 .muted { color: var(--muted); }
 
 /* ── Year slider (full-width bottom bar) ─────────────────── */
